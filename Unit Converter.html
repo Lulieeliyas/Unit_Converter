@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit Conversion Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+        }
+        h1 {
+            text-align: center;
+            color: black;
+         font-family:  arial;
+        }
+        .converter {
+            background-color: rgb(114, 56, 201);
+            padding: 20px;
+            border-radius: 10px;   
+            margin-bottom: 200px;
+            
+        }
+     select, input, button {
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid white;
+            border-radius: 4px; 
+        }
+        button {
+            background-color: rgb(10, 191, 247);
+            color: rgb(248, 248, 248);
+            cursor: pointer;
+            border: none;
+        }
+        button:hover {
+            background-color: #9fceee;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f6fdf9;
+            border-radius: 4px;
+        }
+        .category-selector {
+            margin-bottom: 15px;
+            text-align: center;
+        }
+       .category-selector button {
+            padding: 8px 15px;  /*padding: [top] [right] [bottom] [left];*/
+            margin: 0 5px;
+            background-color: #ddd;
+            color: #2c2a2a;
+        } 
+        .category-selector button.active {
+            background-color: #2b6eeb;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Unit Conversion Tool</h1>
+    
+    <div class="category-selector">
+        <button onclick="showCategory('length')" class="active">Length</button>
+        <button onclick="showCategory('weight')">Weight</button>
+        <button onclick="showCategory('temperature')">Temperature</button>
+        <button onclick="showCategory('volume')">Volume</button>
+    </div>
+    
+    <div id="length-converter" class="converter">
+        <h2 style="color: #9fceee; text-align: center;">Length Converter</h2>
+        <input type="number" id="length-value" placeholder="Enter value">
+        <select id="length-from">
+            <option value="cm">Centimeters (cm)</option>
+            <option value="m">Meters (m)</option>
+            <option value="km">Kilometers (km)</option>
+            <option value="in">Inches (in)</option>
+            <option value="ft">Feet (ft)</option>
+            <option value="yd">Yards (yd)</option>
+            <option value="mi">Miles (mi)</option>
+        </select>
+        <span style="color: #f6fdf9;">to</span>
+      
+        <select id="length-to">
+            <option value="cm">Centimeters (cm)</option>
+            <option value="m">Meters (m)</option>
+            <option value="km">Kilometers (km)</option>
+            <option value="in">Inches (in)</option>
+            <option value="ft">Feet (ft)</option>
+            <option value="yd">Yards (yd)</option>
+            <option value="mi">Miles (mi)</option>
+        </select>
+        <button onclick="convertLength()">Convert</button>
+        <div id="length-result" class="result"></div>
+    </div>
+    
+    <div id="weight-converter" class="converter" style="display:none;">
+        <h2 style="color: #9fceee; text-align: center;">Weight Converter</h2>
+        <input type="number" id="weight-value" placeholder="Enter value">
+        <select id="weight-from">
+            <option value="g">Grams (g)</option>
+            <option value="kg">Kilograms (kg)</option>
+            <option value="oz">Ounces (oz)</option>
+            <option value="lb">Pounds (lb)</option>
+        </select>
+        <span style="color: #f6fdf9;">to</span>
+        <select id="weight-to">
+            <option value="g">Grams (g)</option>
+            <option value="kg">Kilograms (kg)</option>
+            <option value="oz">Ounces (oz)</option>
+            <option value="lb">Pounds (lb)</option>
+        </select>
+        <button onclick="convertWeight()">Convert</button>
+        <div id="weight-result" class="result"></div>
+    </div>
+    
+    <div id="temperature-converter" class="converter" style="display:none;">
+        <h2 style="color: #9fceee; text-align: center;">Temperature Converter</h2>
+        <input type="number" id="temp-value" placeholder="Enter value">
+        <select id="temp-from">
+            <option value="c">Celsius (°C)</option>
+            <option value="f">Fahrenheit (°F)</option>
+            <option value="k">Kelvin (K)</option>
+        </select>
+        <span style="color: #f6fdf9;">to</span>
+        <select id="temp-to">
+            <option value="c">Celsius (°C)</option>
+            <option value="f">Fahrenheit (°F)</option>
+            <option value="k">Kelvin (K)</option>
+        </select>
+        <button onclick="convertTemperature()">Convert</button>
+        <div id="temp-result" class="result"></div>
+    </div>
+    
+    <div id="volume-converter" class="converter" style="display:none;">
+        <h2 style="color: #9fceee; text-align: center;">Volume Converter</h2>
+        <input type="number" id="volume-value" placeholder="Enter value">
+        <select id="volume-from">
+            <option value="ml">Milliliters (ml)</option>
+            <option value="l">Liters (l)</option>
+        </select>
+        <span style="color: #f6fdf9;">to</span>
+        <select id="volume-to">
+            <option value="ml">Milliliters (ml)</option>
+            <option value="l">Liters (l)</option>
+        </select>
+        <button onclick="convertVolume()">Convert</button>
+        <div id="volume-result" class="result"></div>
+    </div>
+
+    <script>
+        // Show/hide converters based on category
+        function showCategory(category) {
+            document.querySelectorAll('.converter').forEach(converter => {
+                converter.style.display = 'none';
+            });
+            document.getElementById(category + '-converter').style.display = 'block';
+            
+            // Update active button
+            document.querySelectorAll('.category-selector button').forEach(button => {
+                button.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+        
+        // Length conversion
+        function convertLength() {
+            const value = parseFloat(document.getElementById('length-value').value);
+            const fromUnit = document.getElementById('length-from').value;
+            const toUnit = document.getElementById('length-to').value;
+            
+            if (isNaN(value)) {
+                document.getElementById('length-result').textContent = 'Please enter a valid number';
+                return;
+            }
+            
+            // Convert to meters first
+            let meters;
+            switch(fromUnit) {
+                case 'cm': meters = value / 100; break;
+                case 'm': meters = value; break;
+                case 'km': meters = value * 1000; break;
+                case 'in': meters = value * 0.0254; break;
+                case 'ft': meters = value * 0.3048; break;
+                case 'yd': meters = value * 0.9144; break;
+                case 'mi': meters = value * 1609.344; break;
+            }
+            
+            // Convert from meters to target unit
+            let result;
+            switch(toUnit) {
+                case 'cm': result = meters * 100; break;
+                case 'm': result = meters; break;
+                case 'km': result = meters / 1000; break;
+                case 'in': result = meters / 0.0254; break;
+                case 'ft': result = meters / 0.3048; break;
+                case 'yd': result = meters / 0.9144; break;
+                case 'mi': result = meters / 1609.344; break;
+            }
+  document.getElementById('length-result').textContent = `${value} ${getUnitName(fromUnit)} = ${result.toFixed(4)} ${getUnitName(toUnit)}`;
+        }
+        
+        // Weight conversion
+        function convertWeight() {
+            const value = parseFloat(document.getElementById('weight-value').value);
+            const fromUnit = document.getElementById('weight-from').value;
+            const toUnit = document.getElementById('weight-to').value;
+            
+            if (isNaN(value)) {
+                document.getElementById('weight-result').textContent = 'Please enter a valid number';
+                return;
+            }
+            
+            // Convert to grams first
+            let grams;
+            switch(fromUnit) {
+                case 'g': grams = value; break;
+                case 'kg': grams = value * 1000; break;
+                case 'oz': grams = value * 28.3495; break;
+                case 'lb': grams = value * 453.592; break;
+            }
+            
+            // Convert from grams to target unit
+            let result;
+            switch(toUnit) {
+                case 'g': result = grams; break;
+                case 'kg': result = grams / 1000; break;
+                case 'oz': result = grams / 28.3495; break;
+                case 'lb': result = grams / 453.592; break;
+            }
+            
+            document.getElementById('weight-result').textContent = `${value} ${getUnitName(fromUnit)} = ${result.toFixed(4)} ${getUnitName(toUnit)}`;
+        }
+        
+        // Temperature conversion
+        function convertTemperature() {
+            const value = parseFloat(document.getElementById('temp-value').value);
+            const fromUnit = document.getElementById('temp-from').value;
+            const toUnit = document.getElementById('temp-to').value;
+            
+            if (isNaN(value)) {
+                document.getElementById('temp-result').textContent = 'Please enter a valid number';
+                return;
+            }
+            
+            // Convert to Celsius first
+            let celsius;
+            switch(fromUnit) {
+                case 'c': celsius = value; break;
+                case 'f': celsius = (value - 32) * 5/9; break;
+                case 'k': celsius = value - 273.15; break;
+            }
+            
+            // Convert from Celsius to target unit
+            let result;
+            switch(toUnit) {
+                case 'c': result = celsius; break;
+                case 'f': result = (celsius * 9/5) + 32; break;
+                case 'k': result = celsius + 273.15; break;
+            }
+            
+            document.getElementById('temp-result').textContent = `${value} ${getUnitName(fromUnit)} = ${result.toFixed(4)} ${getUnitName(toUnit)}`;
+        }
+        
+        // Volume conversion
+        function convertVolume() {
+            const value = parseFloat(document.getElementById('volume-value').value);
+            const fromUnit = document.getElementById('volume-from').value;
+            const toUnit = document.getElementById('volume-to').value;
+            
+            if (isNaN(value)) {
+                document.getElementById('volume-result').textContent = 'Please enter a valid number';
+                return;
+            }
+            
+            // Convert to milliliters first
+            let ml;
+            switch(fromUnit) {
+                case 'ml': ml = value; break;
+                case 'l': ml = value * 1000; break;
+            }
+            
+            // Convert from milliliters to target unit
+            let result;
+            switch(toUnit) {
+                case 'ml': result = ml; break;
+                case 'l': result = ml / 1000; break;
+            }
+            
+            document.getElementById('volume-result').textContent = `${value} ${getUnitName(fromUnit)} = ${result.toFixed(4)} ${getUnitName(toUnit)}`;
+        }
+        
+        // Helper function to get full unit names
+        function getUnitName(unit) {
+            const unitNames = {
+                'cm': 'cm', 'm': 'm', 'km': 'km', 'in': 'in', 'ft': 'ft', 'yd': 'yd', 'mi': 'mi',
+                'g': 'g', 'kg': 'kg', 'oz': 'oz', 'lb': 'lb',
+                'c': '°C', 'f': '°F', 'k': 'K',
+                'ml': 'ml', 'l': 'l'
+            };
+            return unitNames[unit] || unit;
+        }
+    </script>
+</body>
+</html>
